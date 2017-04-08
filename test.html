@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Document</title>
     <style>
-    	#hah {
+    	div {
     		width: 100px;
     		height: 100px;
     		background: red;
@@ -13,13 +13,25 @@
     </style>
 </head>
 <body>
-    <div id="hah"></div>
-	
+    <div id="hah" class=""></div>
+	<div></div>
+	<div></div>
 </body>
 </html>
 <script src="./jqq.js"></script>
 <script>
-console.log($("#hah"));
-$("#hah")[0].style.background = 'red';
+function getStyle (targetDom,attr) {
+	return targetDom.currentStyle?targetDom.currentStyle[attr]:getComputedStyle(targetDom)[attr];
+}
+
+$(function(){
+	var a = document.querySelector('div');
+	console.log($('div').css({
+		background : 'red',
+		width : 500
+	}));
+	$('div').addClass('haha');
+	// console.log($('div').hasClass('lulu'))
+})
 
 </script>
