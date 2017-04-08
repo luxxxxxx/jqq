@@ -15,7 +15,6 @@
 			var typeArgs = typeof args;
 			switch (typeArgs) {   //如果传入的是字符串 自动转化成jqq对象
 				case 'string' : 
-					console.log('string')
 					var jqObject = document.querySelectorAll(args),
 						l = jqObject.length;
 					this.length = l;
@@ -24,18 +23,18 @@
 					};
 					break;
 				case 'function' :
-				console.log('function')
 					window.onload = args;
 					break;
 				case 'object' :  //如果传进来的是dom节点
-				console.log('object')
 					if (args.nodeType || args === window) {  //单个节点判断一下是不是window 
 						this[0] = args;
+						this.length = 1;
 					} else {  //nodeList 就直接转化成jqq对象
 						var l = args.length;
 						for (var i = 0; i < l; i++) {
 							this[i] = args[i];
 						};
+						this.length = l;
 					};
 					break;
 			};
@@ -70,6 +69,12 @@
 				});
 			}
 		},
+		eq : function (num) {  //返回指定位置的jqq对象
+			return $(this[num]);
+		},
+		get : function (num) {
+			return this[num];
+		},
 		hasClass : function (attr) {  //如果至少有一个元素含有该class  就返回true 如果都没有则返回false
 			var flag = false;
 			var reg = new RegExp('\\b' + attr + '\\b');
@@ -83,15 +88,40 @@
 			this.each(function(i) {
 				var classN = this.className;
 				if (!$(this).hasClass(clN)) {  //如果该元素没有该class增加该class
-					var lastChar = classN[classN.length];  //class最后一个字符
-					if (lastChar === 'undefined' || lastChar != '')  //判断class最后一个字符是不是空格或者有其他字符结尾自动在后面补充一个空格
-						this.className += classN + ' ' + clN;
-					  else 
-					  	this.className += classN + clN;
+					var lastChar = classN[classN.length - 1];  //class最后一个字符
+					if ( lastChar === undefined || lastChar === ' ')  //最后一个字符如果不存在 （也就是没有class的情况下）或者最后一个字符是空格
+						this.className += clN;
+					  else if ( lastChar != ' ')
+					  	this.className += ' ' + clN;
 				}
 			})
-		}
+		},
+		removeClass : function (clN) {
+			if (typeof clN === 'string') {
+				this.each(function(i) {
+					var classN = this.className;
+					if ($(this).hasClass(clN)) {
+						var clsArr = classN.split(' '),
+							arrL = clsArr.length,
+							fixArr = [];
+						for (var i = 0; i < arrL; i++) {
+							if (clsArr[i] != '' && clsArr[i] != clN) 
+								fixArr.push(clsArr[i]);
+						}
+						this.className = fixArr.join(' ');
+					};
+				});
+			} else if (typeof clN === 'object') {
+				if (clN instanceof Array) {
+					var l = clN.length;
+					for (var i = 0; i < l; i++) {  //递归实现移除所有数组参数里面的class
+						this.removeClass(clN[i]);						
+					}
+				} else {
+					throw 'type error';
+				}
+			};
+		},
  	}
-
-	window.$ = window.jqq =  $ ;
+	window.$ = window.jqq =  $;
 })()
