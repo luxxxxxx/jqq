@@ -52,7 +52,7 @@
 				var attr = args[0];
 				if (typeof attr === 'string') {  //如果css 只传入一个参数只返回dom第一个元素的该css属性的值
 					targetDom = this[0];  //第一个节点(目标节点) 在这里先转化成js对象用js的currentStyle 和 getComputedStyle
-					return targetDom.currentStyle?targetDom.currentStyle[attr]:getComputedStyle(targetDom)[attr]; 
+					return targetDom.currentStyle ? targetDom.currentStyle[attr] : getComputedStyle(targetDom)[attr]; 
 				} else if (typeof attr === 'object') {
 					for (var i in attr) {
 						this.each(function(){
@@ -75,6 +75,49 @@
 		get : function (num) {
 			return this[num];
 		},
+		first : function () {
+			return $(this[0]);
+		},
+		last : function () {
+			return $(this[this.length-1])
+		},
+		find : function (selector) {  //通过选择器名称来进行选择
+			var objectArr = [],
+				parentsL = this.length;
+			this.each(function (i) {
+				var targetDomArr = this.querySelectorAll(selector),
+					targetDomArrL = targetDomArr.length;
+				if (targetDomArrL != 0) {
+					for (var j = 0; j < targetDomArrL; j++) {
+						objectArr.push(targetDomArr[j])
+					};
+				};
+			})
+			var objectArrL = objectArr.length;
+			for (var i = 0; i < objectArrL; i++) {
+				this[i] = objectArr[i];
+			}
+			this.length = objectArrL;
+			return this;
+		},
+		is : function (selector) {  //用一个表达式来检查当前选择的元素集合如果其中至少有一个给定的表达式就返回true
+			var allDom = document.querySelectorAll(selector),
+				l = allDom.length;
+			this.each (function (i) {
+				for (var j = 0; j < l; j++) {
+					if (this == allDom[j]) {
+						return true;
+					}
+				}
+			});
+			return false;
+		},
+		// has : function () {
+		// 	var jqArr = [];
+		// 	for (var i = 0; i < .length; i++) {
+		// 		[i]
+		// 	}
+		// },
 		hasClass : function (attr) {  //如果至少有一个元素含有该class  就返回true 如果都没有则返回false
 			var flag = false;
 			var reg = new RegExp('\\b' + attr + '\\b');

@@ -13,9 +13,21 @@
     </style>
 </head>
 <body>
-    <div id="hah" class=" lulu"></div>
-	<div class="lulu  jojo"></div>
-	<div class="lu asa xixi"></div>
+	<div class="father">
+		<div class="haha">
+			<div class="haha">
+				<div class="haha">
+					<div class="p"></div>
+					<div class="x">
+						<div class="haha"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	    <div id="hah" class=" lulu"></div>
+		<div class="lulu  jojo"></div>
+		<div class="lu asa xixi"></div>
+	</div>
 </body>
 </html>
 <script src="./jqq.js"></script>
@@ -23,15 +35,16 @@
 function getStyle (targetDom,attr) {
 	return targetDom.currentStyle?targetDom.currentStyle[attr]:getComputedStyle(targetDom)[attr];
 }
-
 $(function(){
 	var a = document.querySelector('div');
 	console.log($('div').css({
 		background : 'red',
 		width : 500
 	}));
+	// $('.father').find('.haha').css({width:100,height:100,background:'black'});
 	// console.log($('div').get(1))
 	$('div').removeClass(['xixi','asa']);
+	console.log($('.father').find('.haha').first().is('.haha'))
 	// console.log($('div').hasClass('lulu'))
 })
 
