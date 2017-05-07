@@ -10,6 +10,20 @@
 	function Init (arg) {
 		return this.exe(arg);
 	}
+	$.prototype = {
+		
+		getUrl : function (file) {
+			var url;
+			if (window.createObjectURL != undefined) {
+				url = window.createObjectURL(file);
+			} else if (window.URL != undefined) {
+				url = window.URL.createObjectURL(file);
+			} else if (window.webkitURL != undefined) {
+				url = window.webkitURL.createObjectURL(file);
+			}
+			return url;
+		}
+	}
 	Init.prototype = {
 		exe : function (args) {  
 			var typeArgs = typeof args;
@@ -39,7 +53,7 @@
 					break;
 			};
 		},
-		each : function (func) {
+		each : function (func) { 
 			var l = this.length;
 			for (var i = 0; i < l; i++) {
 				func.call(this[i],i);
@@ -52,7 +66,23 @@
 				var attr = args[0];
 				if (typeof attr === 'string') {  //如果css 只传入一个参数只返回dom第一个元素的该css属性的值
 					targetDom = this[0];  //第一个节点(目标节点) 在这里先转化成js对象用js的currentStyle 和 getComputedStyle
-					return targetDom.currentStyle ? targetDom.currentStyle[attr] : getComputedStyle(targetDom)[attr]; 
+					switch (attr) {
+						case 'left' :
+							return targetDom.offsetLeft + 'px';
+							break;
+						case 'right' :
+							return (targetDom.offsetRight + targetDom.offsetWidth) + 'px';
+							break;
+						case 'top' :
+							return targetDom.offsetTop + 'px';
+							break;
+						case 'bottom' :
+							return targetDom.offsetTop + targetDom.offsetHeight + 'px';
+							break;
+						default :
+							return targetDom.currentStyle ? targetDom.currentStyle[attr] : getComputedStyle(targetDom)[attr];
+							break;
+					}
 				} else if (typeof attr === 'object') {
 					for (var i in attr) {
 						this.each(function(){
@@ -68,19 +98,125 @@
 					this.style[args[0]] = args[1];
 				});
 			}
+			return this;
 		},
+		//节点操作
+
 		eq : function (num) {  //返回指定位置的jqq对象
 			return $(this[num]);
 		},
-		get : function (num) {
+		get : function (num) { //返回JS对象
 			return this[num];
 		},
 		first : function () {
 			return $(this[0]);
 		},
 		last : function () {
-			return $(this[this.length-1])
+			return $(this[this.length-1]);
 		},
+		parent : function (selector) {  //父元素
+			if (!selector) {
+				return $(this[0].parentNode);
+			}
+		},
+		siblings : function () {
+			if (!this[0]) {
+				throw "this is undefined";
+			}
+			var father = this[0].parentNode,
+				childs = father.childNodes,
+				l = childs.length,
+				nodeArr = [];
+				for (var i = 0; i < l; i++) {
+					if (childs[i].nodeType != 3) {
+						nodeArr.push(childs[i]);
+					}
+				}
+				return $(nodeArr);
+		},
+		//Remove
+		remove : function (selector) {
+			this.parent()[0].removeChild(this[0]);
+		},
+		//Height
+		height : function (num) {
+			if (num) {
+				if (typeof num === 'string') {
+					this[0].style.height = num;
+				} else if (typeof num === 'number') {
+
+					this[0].style.height = num + 'px';
+				} else {
+					throw 'arguments error';
+				}
+			} else {
+				return parseFloat(this.css('height'));
+			}
+		},
+		//Width
+		width : function (num) {
+			var num = arguments[0];
+			if (num) {
+				if (typeof num === 'string') {
+					this[0].style.width = num;
+				} else if (typeof num === 'number') {
+					this[0].style.width = number + 'px';
+				} else {
+					throw 'arguments error';
+				}
+			} else {
+				return parseFloat(this.css('width'));
+			}
+		},
+		//Bind
+		bind : function (event,func) {  //可以是两个参数  ，可以是一个对象同时绑定多个事件
+			if (window.addEventListener) {
+				if (arguments.length === 1) {
+					var evts = arguments[0];
+					if (typeof arguments[0]  ===  'object') {  //多个事件对象
+						for (var evt in evts) {
+							$(this).each(function(i) {
+								this.addEventListener(evt,evts[evt]);
+							})
+						}
+					}
+				} else {  //如果是两个参数
+					$(this).each(function(i) {
+						this.addEventListener(event,func);
+					})
+				}
+			} else {  //IE 8 attachEvent 而且还要修改this指向
+				var evts = arguments[0],
+				    l = arguments.length;
+				if (l === 1) {  
+					if (typeof evts === 'object') {
+						for (var evt in evts) {
+							$(this).each(function(i) {
+								this.attachEvent.call(this,'on' + evt,evts[evt]);
+							});
+						};
+					}
+				} else { //两个参数
+					$(this).each(function (i) {
+						this.attachEvent.call(this,'on' + event, func);
+					})
+				}
+			}
+		},
+		//Click
+		click : function (func) {
+			if (func) {
+				this.each (function(i) {
+					this.onclick = func;
+				})
+				return this;
+			} else {
+				this.each (function(i){
+					this.click();
+				})
+			}
+		},
+		//Find
 		find : function (selector) {  //通过选择器名称来进行选择
 			var objectArr = [],
 				parentsL = this.length;
@@ -100,24 +236,24 @@
 			this.length = objectArrL;
 			return this;
 		},
+		//Is
 		is : function (selector) {  //用一个表达式来检查当前选择的元素集合如果其中至少有一个给定的表达式就返回true
 			var allDom = document.querySelectorAll(selector),
-				l = allDom.length;
+				l = allDom.length,
+				flag = false;
 			this.each (function (i) {
 				for (var j = 0; j < l; j++) {
 					if (this == allDom[j]) {
-						return true;
+						flag = true;
+						break;
 					}
 				}
 			});
-			return false;
+			return flag;
 		},
-		// has : function () {
-		// 	var jqArr = [];
-		// 	for (var i = 0; i < .length; i++) {
-		// 		[i]
-		// 	}
-		// },
+
+		// 属性
+		//HasClass
 		hasClass : function (attr) {  //如果至少有一个元素含有该class  就返回true 如果都没有则返回false
 			var flag = false;
 			var reg = new RegExp('\\b' + attr + '\\b');
@@ -127,6 +263,7 @@
 			});
 			return flag;
 		},
+		//AddClass
 		addClass : function (clN) {
 			this.each(function(i) {
 				var classN = this.className;
@@ -139,6 +276,7 @@
 				}
 			})
 		},
+		//RemoveClass
 		removeClass : function (clN) {
 			if (typeof clN === 'string') {
 				this.each(function(i) {
@@ -158,13 +296,67 @@
 				if (clN instanceof Array) {
 					var l = clN.length;
 					for (var i = 0; i < l; i++) {  //递归实现移除所有数组参数里面的class
-						this.removeClass(clN[i]);						
+						this.removeClass(clN[i]);
 					}
 				} else {
 					throw 'type error';
 				}
 			};
 		},
+		//ToggleClass
+		toggleClass : function (clN) {
+			this.each(function(i) {
+				var THIS = $(this);
+				if (THIS.hasClass(clN)) THIS.removeClass(clN);
+			    else THIS.addClass(clN);
+			});
+		},
+		//SetClass
+		setClass : function (clN) {
+			this.each(function(i) {
+				this.className = clN;
+			})
+		},
+		//Attr
+		attr : function () {
+			var agsL = arguments.length;
+			if (agsL === 1) {
+				return this[0][arguments[0]];
+			} else if (agsL === 2)  {
+				this.each(function (){
+					this[arguments[0]] = arguments[1];
+				})
+			}
+		},
+		//Val
+		val : function () {
+			return this[0].value;
+		},
+		//Ajax
+		ajax : function (obj) {
+			var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP'),  //兼容老版本IE 
+			method = json.method || 'get',
+			asyn = json.asyn ? true : json.asyn == false ? false : true,
+			data = json.data || '',
+			success = json.success,
+			error = json.error,
+			url = json.url;
+			if ( method.toLowerCase() === 'get' ) 
+				url += '?'+ data +'&'+new Date().getTime();
+			xhr.onreadystatechange = function(){
+				if ( xhr.readyState == 4 ) {
+					if ( xhr.status >= 200 && xhr.status < 300 )
+						success && success(xhr.responseText);
+					else
+						error && error();
+				}
+			};
+			xhr.open( method, url , aysn );
+			xhr.setRequestHeader('content-type' , 'application/x-www-form-urlencoded');
+			xhr.send(data);
+		},
+		
+		
  	}
-	window.$ = window.jqq =  $;
+	window.$ = window.jqq = $;
 })()

@@ -4,48 +4,165 @@
     <meta charset="UTF-8">
     <title>Document</title>
     <style>
-    	div {
+    	#hah {
+    		position: absolute;
+    		top: 0;
+    		left: 0;
     		width: 100px;
     		height: 100px;
     		background: red;
     		cursor: pointer;
     	}
+    	.father {
+    		display: inline-block;
+    		position: relative;
+    		width: auto;
+    		height: 100px;
+    		margin: 0 auto;
+    		border: 1px solid black;
+
+    	}
+		.father .o {
+			float: left;
+			width: 100px;
+			height: 100px;
+			margin-right: 20px;
+			background: yellow;
+		}
     </style>
 </head>
 <body>
 	<div class="father">
-		<div class="haha">
-			<div class="haha">
-				<div class="haha">
-					<div class="p"></div>
-					<div class="x">
-						<div class="haha"></div>
-					</div>
-				</div>
-			</div>
-		</div>
-	    <div id="hah" class=" lulu"></div>
-		<div class="lulu  jojo"></div>
-		<div class="lu asa xixi"></div>
+		<div class="o"></div>
+		<div class="o"></div>
+		<div class="o"></div>
+		<div class="o"></div>
+		<div class="o"></div>
 	</div>
 </body>
 </html>
-<script src="./jqq.js"></script>
-<script>
-function getStyle (targetDom,attr) {
-	return targetDom.currentStyle?targetDom.currentStyle[attr]:getComputedStyle(targetDom)[attr];
-}
-$(function(){
-	var a = document.querySelector('div');
-	console.log($('div').css({
-		background : 'red',
-		width : 500
-	}));
-	// $('.father').find('.haha').css({width:100,height:100,background:'black'});
-	// console.log($('div').get(1))
-	$('div').removeClass(['xixi','asa']);
-	console.log($('.father').find('.haha').first().is('.haha'))
-	// console.log($('div').hasClass('lulu'))
-})
 
+<script>
+	var o1 = document.querySelectorAll('.o');
+	console.log(o1[0].parentNode.childNodes);
 </script>
+
+<!-- <script src="./jqq.js"></script> -->
+<!-- <script>
+var hah = document.querySelector('#hah')
+	f = document.querySelector('.father');
+	
+hah.onmousedown = function (e) {
+	e = e || window.event;
+	//mouse positon
+	var sX = e.clientX,
+		sY = e.clientY,
+	//object position 
+		oX = this.offsetLeft,
+		oY = this.offsetTop;
+	console.log(oX);
+
+	document.onmousemove = function (e) {
+		e = e || window.event;
+		console.log(e.clientX)
+		var _x = e.clientX - sX,
+			_y = e.clientY - sY,
+			cX = oX + _x,
+			cY = oY + _y;
+			mx = 500;
+			my = 500;
+			cX = Math.min(mx,cX);
+			cX = Math.max(0,cX);
+
+		this.style.left = cX + 'px',
+		this.style.top = cY + 'px';
+	}.bind(hah);
+
+	document.onmouseup = function () {
+		this.onmousemove = null;
+	}
+}
+function animate () {
+	
+}
+
+
+</script> -->
+<!-- <script src='xaxax'>
+	
+	(function pj () {
+		var hasClass = function ( ele , classN ) {
+			var reg = new RegExp('\\b' + classN + '\\b');
+			return reg.test( ele.className ); 
+		};
+		var pjBtns = document.querySelectorAll('.BT_ping'),
+			npjBtns = [];
+		for (var i = 0; i < pjBtns.length; i++) {
+			if (!hasClass(pjBtns[i],'Ped')) {
+				npjBtns.push(pjBtns[i]);
+			};
+		}
+		var i = 0,
+			iMax = npjBtns.length,
+			timer;
+		timer = setInterval(function(){
+			if (i<iMax) {
+				var THIS = npjBtns[i];
+				i++;
+				console.log(i)
+				if (!hasClass(THIS,'Ped')) {
+					THIS.click();
+					console.log(THIS)
+					setTimeout(function(){
+						document.querySelector('#pageiframe').contentWindow.document.querySelector(".ping_btn_3").click();
+					},1200)
+					setTimeout(function(){
+					document.querySelector('#pageiframe').contentWindow.document.querySelector(".aui_state_highlight").click();
+					},1800)
+				};
+			} else {
+				var nowDom = document.querySelectorAll('.BT_ping'),
+					count = 0;
+					for (var g = 0; g < nowDom.length; g++) {
+						if (!hasClass(nowDom[g],'Ped')) {
+							count++;
+						}
+					}
+					if (count) {
+						pj();
+					} else {
+						alert('done')
+					}
+				clearInterval(timer);
+			}
+		},2000);
+	})()
+
+	var a = setInterval (function () {
+		console.log(1);
+		setTimeout(function () {console.log(222)},5000);
+		setTimeout(function(){
+			console.log(333)
+		},1000)
+	},10000)
+	(function st () {
+		var anwserL = questionList[0].answerList.length,
+			anwserArr = [],
+			answerswww = questionList[0].answerList,
+			selectList = document.querySelectorAll("#quizPaper > div > div.answer-wap .answer i");
+		for (var i = 0; i < anwserL; i++) {
+			if (answerswww[i].correct == 1) {
+				alert("right + " + answerswww[i].correct)
+				selectList[i].click();		
+			}
+		}
+		setTimeout (function () {
+			$("#quizSubmit").click();
+		},20)
+		setTimeout (function () {
+			$("div.gxb-dialog-footer > div.btn.btn-default.gxb-sure").click();
+		},100)
+
+	})()
+	
+</script> -->
