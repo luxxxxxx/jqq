@@ -1,6 +1,8 @@
 /**
  *  Created on 2017/4/7
- *  version jqq-1.2
+ *  version jqq-1.30
+	修正了 ajax
+	增加了对cookie 的操作
  *  Author luxxxxxx
 **/
 
@@ -59,6 +61,7 @@
 				func.call(this[i],i);
 			};
 		},
+		//Css
 		css : function () {
 			var args = arguments,
 				argsL = arguments.length;
@@ -109,7 +112,6 @@
 							this.style[args[0]] = args[1];
 							break; 
 					}
-					
 				});
 			}
 			return this;
@@ -163,7 +165,6 @@
 						nodeArr.push(childs[i]);
 					}
 				}
-				console.log(nodeArr)
 				return $(nodeArr);
 		},
 		//Remove
@@ -174,6 +175,12 @@
 		child : function (num) {
 			return $(this[0].children[num]);
 		},
+
+		// append : function (jqq) {
+		// 	domArr = [],
+
+		// },
+
 		//Height
 		height : function (num) {
 			if (num) {
@@ -302,10 +309,8 @@
 		
 		//Find
 		find : function (selector) {
-			console.log(this[0]);
 			return $(this[0].querySelectorAll(selector)); 
 		},
-
 		is : function (selector) {  //用一个表达式来检查当前选择的元素集合如果其中至少有一个给定的表达式就返回true
 			var allDom = document.querySelectorAll(selector),
 				l = allDom.length,
@@ -345,6 +350,12 @@
 				}
 			})
 			return this;
+		},
+		//Class 
+		class : function (classN) {
+			this.each(function () {
+				this.className = classN;
+			})
 		},
 		//RemoveClass
 		removeClass : function (clN) {
@@ -399,8 +410,15 @@
 			}
 		},
 		//Val
-		val : function () {
-			return this[0].value;
+		val : function (text) {
+			if (arguments.length != 0) {  
+				this.each(function () {
+					this.value = text;
+				})
+				return this;
+			} else {
+				return this[0].value;
+			}
 		},
 		//Move  运动框架
 		// targetJson : left,width ....能够变换的属性和 变换的数值 
@@ -446,8 +464,25 @@
 
  	}
 	window.$ = window.jqq = $;
+
+
+
+	//cookie
+	window.getCookie = function (key) {
+		var r = new RegExp('\\b' + key + '=([^;]+)(; |\$)');
+		var val = document.cookie.match(r);
+		return val ? val[1] : '';
+	}
+	window.setCookie = function (key, value, time) {
+		document.cookie = key + '=' + value + ';expires=' + (new Date(new Date().getTime() + time)).toGMTString();
+	}
+
+	window.removeCookie = function (key) {
+		setCookie(key, '', -1);
+	}
+
 	//Ajax
-	window.Ajax = function (obj) {
+	window.Ajax = function (json) {
 		var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP'),  //兼容老版本IE 
 		method = json.method || 'get',
 		asyn = json.asyn ? true : json.asyn == false ? false : true,
@@ -455,8 +490,16 @@
 		success = json.success,
 		error = json.error,
 		url = json.url;
-		if ( method.toLowerCase() === 'get' ) 
-			url += '?'+ data +'&'+new Date().getTime();
+		if ( method.toLowerCase() === 'get' ) {
+            url += '?'+ data +'&'+new Date().getTime();
+        } else {
+			var newData = "";
+			for (var key in data) {
+				newData += key + '=' + data[key] + '&';
+			}
+			data = newData.slice(0,newData.length - 1);
+        }
+
 		xhr.onreadystatechange = function(){
 			if ( xhr.readyState == 4 ) {
 				if ( xhr.status >= 200 && xhr.status < 300 )
@@ -604,10 +647,6 @@
 			return Tween['bounceOut'](t*2-d, 0, c, d) * 0.5 + c*0.5 + b;
 		}
 	};
-
-
-
-
 
 
 
