@@ -169,7 +169,9 @@
 		},
 		//Remove
 		remove : function (selector) {
-			this.parent()[0].removeChild(this[0]);
+			this.each(function(){
+				this.parentNode.removeChild(this);
+			})
 		},
 		//Child 
 		child : function (num) {
@@ -192,6 +194,7 @@
 				} else {
 					throw 'arguments error';
 				}
+				return this;
 			} else {
 				return parseFloat(this.css('height'));
 			}
@@ -213,6 +216,7 @@
 				} else {
 					throw 'arguments error';
 				}
+				return this;
 			} else {
 				return parseFloat(this.css('width'));
 			}
@@ -353,9 +357,14 @@
 		},
 		//Class 
 		class : function (classN) {
-			this.each(function () {
-				this.className = classN;
-			})
+			if (arguments.length) {
+				this.each(function () {
+					this.className = classN;
+				});
+				return this;
+			} else {
+				return this[0].className;
+			}
 		},
 		//RemoveClass
 		removeClass : function (clN) {
@@ -391,15 +400,12 @@
 				if (THIS.hasClass(clN)) THIS.removeClass(clN);
 			    else THIS.addClass(clN);
 			});
+			return this;
 		},
 		//SetClass
-		setClass : function (clN) {
-			this.each(function(i) {
-				this.className = clN;
-			})
-		},
+		
 		//Attr
-		attr : function () {
+		attr : function (attr) {
 			var agsL = arguments.length;
 			if (agsL === 1) {
 				return this[0][arguments[0]];
@@ -407,6 +413,7 @@
 				this.each(function (){
 					this[arguments[0]] = arguments[1];
 				})
+				return this;
 			}
 		},
 		//Val
