@@ -1,6 +1,8 @@
 # jqq
 写一个jquery更加轻量级框架 虽然功能没有jq那么强大，但是里面包含着项目常用的方法 和jq一样利用了方便的链式操作 取名为jqq
 
+当前版本    -v1.30
+
 ### API
 
 + 绑定window对象的方法
@@ -263,8 +265,72 @@
   >
   > attr (attr)   //设置或者获取jqq对象的 属性 attr
   >
-  > ```javascript
+  > ``` javascript
+  > jqq.attr('attr')  //获取当前jqq对象组（第一个子对象）的该 attr值
   >
+  >
+  > jqq.attr('class','xixi')  //设置当前jqq对象组(第一个子对象)的 class  为  xixi
+  > ```
+  >
+  > val  //获取value
+  >
+  > ```javascript
+  > jqq.val()  //返回当前jqq对象(第一个子对象)的 value
+  >
+  > jqq.val('content')  //遍历jqq对象组,将所有的jqq对象节点的value 设置为 传入参数
+  > ```
+  >
+  > ​
+  >
+  > ### jqq中的 运动框架
+  >
+  > move (obj)
+  >
+  > ```javascript
+  > jqq.move({
+  > 	targetJson,
+  > 	time,
+  > 	mf,
+  > 	callback
+  > })
+  > // targetJson : left,width ....能够变换的属性和 变换的数值 
+  > // time ： 运动时间 
+  > // mf ： 运动曲线函数 
+  > // cb : callback 回调函数
+  > //
+  > /*
+  > 传参 jqq.move({
+  > 	targetJson,
+  > 	time,
+  > 	mf,
+  > 	callback
+  > })
+  > */
+  > // 第一个元素实现move   只限一个元素
+  >
+  > ```
+  >
+  > ​
+  >
+  > ### jqq中的 事件操作
+  >
+  > bind (event,func)
+  >
+  > ```javascript
+  > jqq.bind('click',function(e){})    //绑定事件 jqq对象
+  >
+  > jqq.bind({   //绑定多个事件  并返回当前jqq对象
+  >   'click':function () {},
+  >   'mouseover': function () {}
+  > })
+  >
+  >
+  > ```
+  >
+  > click (func) //绑定点击事件
+  >
+  > ```javascript
+  > jqq.click(func)  //绑定点击事件
   > ```
   >
   > ​
