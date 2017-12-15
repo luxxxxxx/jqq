@@ -505,7 +505,7 @@
 				if ( xhr.status >= 200 && xhr.status < 300 )
 					success && success(xhr.responseText);
 				else
-					error && error();
+					error && error(xhr);
 			}
 		};
 		xhr.open( method, url , asyn );
