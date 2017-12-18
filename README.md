@@ -152,6 +152,12 @@
   > jqq.html()  //返回当前jqq对象组(第一个dom对象)的innerHTML
   > ```
   >
+  > text  //修改里面文本节点的
+  >
+  > ```javascript
+  > jqq.text(str)  //设置当前对象组的文本 -- 测试 
+  > ```
+  >
   > empty  //清空所有子节点
   >
   > ```javascript
